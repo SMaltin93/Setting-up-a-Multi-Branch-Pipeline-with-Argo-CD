@@ -1,40 +1,30 @@
-3. **Step 3: Apply the Pipelines in Argo CD**
+# Apply the configurations in ArgoCD
+Now that you have the manifest files in place, it's time to apply them to Argo CD.
 
-Now that you have created the necessary files in your repository, it's time to apply the pipelines to Argo CD.
+## Deploy the production web-app
+We'll first deploy the production web-app. Grab the url to the application.yaml file in raw format (in your `main`{{}} branch) and execute the following command in this virtual-machine:
 
-### Instructions:
+`kubectl apply -f <URL-to-your-application.yaml> -n argocd`{{copy}}
 
-1. **Navigate to the `argo-cd` directory**:
-   Use the terminal to navigate into the `argo-cd` directory in your repository:
+> ### Get the url for the raw application.yaml file
+>Assuming that you are hosting your repository on github, you can navigate to argo-cd/application.yaml (on your 'main' branch) and click "raw" and copy the url
+><img src="./gitRawLink.png" style="width: 700px">
 
-   ```bash
-   cd argo-cd
-   ```
+Our production application should (soon) be up and running. Invoke `kubectl`{{}} to see for yourself:
 
-2. **Apply the `application.yaml` file for the main branch**:
-   Apply the Argo CD configuration for the main branch by running the following command (Make sure that you have checked out to your dev branch):
+`kubectl get deployments -n dummy-webapp-production`{{exec}}
 
-   ```bash
-   kubectl apply -f application.yaml
-   ```
+Now, do the same but for our development branch. Just copy the link for `application.yaml`{{}} from your development branch on GitHub and use the same commands to deploy.
 
-   This command will create the Argo CD application for the stable deployment branch.
-**To deploy your stable application checkout to your main branch and run the same command**
+## How to access the web-app?
+To access the production web-app:
+`kubectl port-forward svc/dummy-webapp-service -n dummy-webapp-production 8888:8888 --address 0.0.0.0 &`{{exec}}
 
+[(Click here to access the production site)]({{TRAFFIC_HOST1_8888}})
 
-4. **Verify that the applications have been created**:
-   After applying the configurations, verify that the applications have been created by running:
+And our development site:
+`kubectl port-forward svc/dummy-webapp-service -n dummy-webapp-development 9999:8888 --address 0.0.0.0 &`{{exec}}
 
-   ```bash
-   kubectl get applications -n argocd
-   ```
+[(Click here to access the dev site)]({{TRAFFIC_HOST1_9999}})
 
-   You should see both the `multi-branch-pipeline-main` and `multi-branch-pipeline-dev` applications listed.
-
-5. **Monitor the sync status in Argo CD**:
-   Go to the Argo CD dashboard to view the sync status of your applications. Argo CD will automatically sync with the manifests in your GitHub repository and apply any changes.
-   
-   Once the pipelines have been applied, proceed to the next step to log in to the Argo CD dashboard.
-
-6. **Automatic Deployment**
-To see that any changes you make gets automatically deployed, the print message in your python program and push your newly built image to your registry. You should see how ArgoCD automatically redeploys your app with the latest image.
+See, Argo CD actually deployed our apps 👌

@@ -1,32 +1,42 @@
-Unfortunately, the KillerCoda environment does not support buttons or clickable elements directly in the terminal or markdown that can trigger shell commands. However, you can guide the user to run a specific command in the terminal themselves to retrieve the credentials.
+# Access the Argo CD UI
+Let's access the user interface
 
-You could set up something like this in your markdown file:
+## 1. Retrieve the Argo CD credentials
+Run the following command in the terminal to get your Argo CD credentials:
 
-```md
-## Step 4: Log In to Argo CD
+`echo "Username: admin"`{{exec}}
 
-Now that the pipelines are set up in Argo CD, it's time to log in to the Argo CD dashboard.
+`echo "Password: $admin_password"`{{exec}}
 
-### Instructions:
-
-1. **Open the Traffic/Port menu**:
-   - In the top right of the screen, click on the **Traffic/Port** menu.
-
-2. **Access the Argo CD dashboard**:
+## 2. Open the Traffic/Port menu
+   - In the top right of the Killercoda dashboard and then **Traffic/Port**.
    - Click on the link for **Port 8080** to open the Argo CD dashboard in your browser.
-[ArgoCD]({{TRAFFIC_HOST1_8080}})
+[(Or you could just click here 6 times)]({{TRAFFIC_HOST1_8080}})
 
-3. **Retrieve the Argo CD credentials**:
-   Run the following command in the terminal to get your login credentials:
-   
-   ```bash
-   echo "Username: admin"
-   echo "Password: $admin_password"
-   ```
+## 3. Sign in to Argo CD
+Use the credentials displayed in the terminal to log in.
 
-4. **Log in to Argo CD**:
-   Use the credentials displayed in the terminal to log in.
+You should see both the `dummy-webapp-production`{{}} and `dummy-webapp-development`{{}} applications listed.
+<img src="./ArgoCD_dashboard.png" style="width: 700px">
 
-Click **Finish** when you're done to complete the tutorial.
-```
+Click on either of the apps to see the structure and status of your apps.
+
+# 4. Give Argo-CD write access to your git repository
+In the next steps, you will push changes of your deployment manifest and new image builds to your Docker Hub to see how Argo CD reacts. Therefore, you will first have to give Argo CD write access to your repository.
+
+## 4.a Generate a github token
+Assuming that you're using GitHub, the simplest option is to generate a *(classic) personal access tokens* with write rights to your repositories.
+<img src="./gitHubtoken.png" style="width: 700px">
+
+## 4.b Connect your repo to Argo CD
+- In the Argo CD user interface, enter `Settings`{{}} on the left-hand bar and enter `Repositories`{{}}.
+- Click on `+ CONNECT REPO`{{}}
+- Select `HTTPS`{{}} as connection method and enter your repo URL, username and the github access token as password.
+- Set `type`{{}} to `git`{{}} and `project`{{}} to `default`{{}}
+- Click `CONNECT`{{}}
+
+<img src="./argoGitRepo.png" style="width: 700px">
+
+You should see that Argo successfully connected to your repository
+<img src="./connectedRepo.png" style="width: 700px">
 
